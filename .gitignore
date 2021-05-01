@@ -6,6 +6,9 @@
 !.vscode/extensions.json
 *.code-workspace
 
+# Web RTC Logs
+.webrtc_event_logs/*
+
 # Local History for Visual Studio Code
 .history/
 
