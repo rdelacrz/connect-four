@@ -17,8 +17,28 @@ class Player:
         self.id = id
         self.name = name
 
+def js_callback(func):
+    """
+    Takes the return value of the function being wrapped and passes it through the callback function (if any).
+    It is meant for JavaScript callback purposes, which cannot return a value because inter-process messaging 
+    is asynchronous.
+    """
+
+    def wrapper(*args, callback_fn=None):
+        ret = func(*args)
+        if callback_fn:
+            callback_fn(ret)
+        else:
+            return ret
+
+    return wrapper
+
 class ConnectFourGame:
-    def __init__(self, player_names: list[str], width=7, height=6, victory_condition=4):
+    """
+    Encapsulates logic for setting up the initial parameters of a Connect Four game and establishing its rules.
+    """
+
+    def __init__(self, player_names: 'list[str]', width=7, height=6, victory_condition=4):
         """
         Sets up a game of Connect Four.
 
@@ -86,6 +106,7 @@ class ConnectFourGame:
 
         return chain
 
+    @js_callback
     def check_for_victory(self, row: int, col: int):
         """
         Checks for a line of horizontal, vertical, or diagonal discs that meet the victory condition for
@@ -128,12 +149,14 @@ class ConnectFourGame:
 
         return None
 
+    @js_callback
     def change_player(self, player_id: int = None):
         """
         Changes player. If player id is given, that player id is explicitly set, otherwise goes to the next
         player in the list of players.
 
         :param `player_id`: Id of player to set.
+        :return: Id of player being changed to.
         """
 
         if player_id is None:
@@ -143,6 +166,9 @@ class ConnectFourGame:
                 raise IllegalAction('Player id does not exist in the list of players')
             self.current_player = player_id
 
+        return self.current_player
+
+    @js_callback
     def drop_disc(self, col_num: int):
         """
         Drops disc belonging to the current player in the given column, and switches to the next player.

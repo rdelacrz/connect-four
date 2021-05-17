@@ -8,6 +8,9 @@ Tested with CEF Python v66.1+
 import platform
 import os, sys
 
+# User-defined libraries
+from logic.core.game import ConnectFourGame
+
 # Third-party libraries
 from cefpython3 import cefpython as cef
 
@@ -22,6 +25,7 @@ def main():
     })
     curr_dir = os.path.dirname(os.path.abspath(__file__))
     browser = cef.CreateBrowserSync(url='file://' + os.path.join(curr_dir, "ui", "dist", "index.html"))
+    set_javascript_bindings(browser)
     cef.MessageLoop()
     cef.Shutdown()
 
@@ -31,6 +35,12 @@ def check_versions():
     print("[hello_world.py] Python {ver} {arch}".format(
           ver=platform.python_version(), arch=platform.architecture()[0]))
     assert cef.__version__ >= "66.1", "CEF Python v66.1+ required to run this"
+
+def set_javascript_bindings(browser):
+    connect_four = ConnectFourGame(['Player One', 'Player Two'])
+    bindings = cef.JavascriptBindings(bindToFrames=False, bindToPopups=False)
+    bindings.SetObject("connectFour", connect_four)
+    browser.SetJavascriptBindings(bindings)
 
 if __name__ == '__main__':
     main()

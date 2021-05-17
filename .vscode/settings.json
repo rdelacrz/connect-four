@@ -1,5 +1,6 @@
 {
     "python.autoComplete.addBrackets": true,
     "python.linting.enabled": true,
-    "git.ignoreLimitWarning": true
+    "git.ignoreLimitWarning": true,
+    "python.analysis.completeFunctionParens": true
 }

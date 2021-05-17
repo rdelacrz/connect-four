@@ -1,7 +1,7 @@
 <template>
   <div class="grid-wrapper">
     <div>
-      Grid
+      Grids
     </div>
   </div>
 </template>
@@ -16,7 +16,7 @@ import { Options, Vue } from 'vue-class-component';
     width: Number,
   }
 })
-export default class HelloWorld extends Vue {
+export default class Grid extends Vue {
   height!: number;
   width!: number;
 
