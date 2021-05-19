@@ -107,6 +107,17 @@ class ConnectFourGame:
         return chain
 
     @js_callback
+    def get_game_state(self):
+        state = {
+            players: self.players,
+            currentPlayer: self.current_player,
+            discs: self.discs,
+            grid: self.grid,
+            victory_condition: self.victory_condition,
+        }
+        return state
+
+    @js_callback
     def check_for_victory(self, row: int, col: int):
         """
         Checks for a line of horizontal, vertical, or diagonal discs that meet the victory condition for

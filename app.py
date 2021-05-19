@@ -39,7 +39,7 @@ def check_versions():
 def set_javascript_bindings(browser):
     connect_four = ConnectFourGame(['Player One', 'Player Two'])
     bindings = cef.JavascriptBindings(bindToFrames=False, bindToPopups=False)
-    bindings.SetObject("connectFour", connect_four)
+    bindings.SetObject('connectFour', connect_four)
     browser.SetJavascriptBindings(bindings)
 
 if __name__ == '__main__':
