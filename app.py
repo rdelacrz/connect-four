@@ -31,8 +31,8 @@ def main():
 
 def check_versions():
     ver = cef.GetVersion()
-    print("[hello_world.py] CEF Python {ver}".format(ver=cef.__version__))
-    print("[hello_world.py] Python {ver} {arch}".format(
+    print("[app.py] CEF Python {ver}".format(ver=cef.__version__))
+    print("[app.py] Python {ver} {arch}".format(
           ver=platform.python_version(), arch=platform.architecture()[0]))
     assert cef.__version__ >= "66.1", "CEF Python v66.1+ required to run this"
 

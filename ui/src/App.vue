@@ -11,7 +11,9 @@ import Grid from './components/Grid.vue';
     Grid,
   },
 })
-export default class App extends Vue {}
+export default class App extends Vue {
+  
+}
 </script>
 
 <style lang="scss">
