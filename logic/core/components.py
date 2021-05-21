@@ -11,6 +11,10 @@ class Disc:
         self.player_id = player_id
         self.color = color
 
+    @property
+    def state(self):
+        return { 'player_id' : self.player_id, 'color' : self.color }
+
 class GridSpace:
     def __init__(self, x: int, y: int):
         self.disc: Disc = None
@@ -19,6 +23,11 @@ class GridSpace:
 
     def __repr__(self):
         return '_' if self.disc is None else str(self.disc.player_id)
+
+    @property
+    def state(self):
+        disc_state = None if self.disc is None else self.disc.state
+        return { 'disc' : disc_state, 'x' : self.x, 'y' : self.y }
 
 class ConnectFourGrid:
     def __init__(self, width=7, height=6):
@@ -39,6 +48,17 @@ class ConnectFourGrid:
             row = [self.grid_spaces[x][y] for x in range(self.width)]
             board_repr += ' '.join([str(grid_space) for grid_space in row]) + '\n'
         return board_repr
+
+    @property
+    def state(self):
+        return { 
+            'width' : self.width, 
+            'height' : self.height, 
+            'total_capacity' : self.total_capacity,
+            'grid_spaces' : [[space.state for space in col] for col in self.grid_spaces],
+            'available_col_spaces' : self.available_col_spaces,
+            'inserted_disc_count' : self.inserted_disc_count
+        }
 
     def setup_grid(self):
         """

@@ -7,6 +7,7 @@ Tested with CEF Python v66.1+
 # Built-in libraries
 import platform
 import os, sys
+import types
 
 # User-defined libraries
 from logic.core.game import ConnectFourGame
@@ -37,9 +38,12 @@ def check_versions():
     assert cef.__version__ >= "66.1", "CEF Python v66.1+ required to run this"
 
 def set_javascript_bindings(browser):
-    connect_four = ConnectFourGame(['Player One', 'Player Two'])
     bindings = cef.JavascriptBindings(bindToFrames=False, bindToPopups=False)
+
+    # Binds connect four's functions to the application
+    connect_four = ConnectFourGame()
     bindings.SetObject('connectFour', connect_four)
+
     browser.SetJavascriptBindings(bindings)
 
 if __name__ == '__main__':

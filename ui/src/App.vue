@@ -1,19 +1,29 @@
 <template>
-  <Grid />
+  <Grid :state='grid' />
 </template>
 
 <script lang="ts">
+import { computed, defineComponent } from 'vue';
+import { mapState } from 'vuex';
 import { Options, Vue } from 'vue-class-component';
 import Grid from './components/Grid.vue';
 
-@Options({
+const App = defineComponent({
+  computed: {
+    grid() {
+      return this.$store.state.gameState?.grid;
+    },
+  },
   components: {
     Grid,
   },
+  mounted() {
+    this.$store.dispatch('getGameState');
+  },
 })
-export default class App extends Vue {
-  
-}
+
+export default App;
+
 </script>
 
 <style lang="scss">

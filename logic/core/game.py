@@ -2,6 +2,10 @@
 Contains the logic needed to run a game of Connect Four.
 """
 
+# Third-party modules
+from cefpython3 import cefpython as cef
+
+# User-defined modules
 from .components import ConnectFourGrid, Disc
 from .exceptions import IllegalAction, IllegalState, InvalidSpace
 
@@ -12,11 +16,6 @@ DISC_COLORS = [
     '#293777',  # blue
 ]
 
-class Player:
-    def __init__(self, id: int, name: str):
-        self.id = id
-        self.name = name
-
 def js_callback(func):
     """
     Takes the return value of the function being wrapped and passes it through the callback function (if any).
@@ -24,21 +23,38 @@ def js_callback(func):
     is asynchronous.
     """
 
-    def wrapper(*args, callback_fn=None):
-        ret = func(*args)
-        if callback_fn:
-            callback_fn(ret)
+    def wrapper(*args):
+        # Grabs callback function from positional arguments (if one is provided)
+        callback_fn = None
+        func_args = args
+        if type(args[-1]) is cef.JavascriptCallback:
+            callback_fn = args[-1]
+            func_args = args[:-1]
+
+        # Passes return value from function accordingly (depending on whether a callback function is passed or not)
+        ret = func(*func_args)
+        if callback_fn is not None:
+            callback_fn.Call(ret)
         else:
             return ret
 
     return wrapper
+ 
+class Player:
+    def __init__(self, player_id: int, name: str):
+        self.id = player_id
+        self.name = name
+
+    @property
+    def state(self):
+        return { 'id' : self.id, 'name' : self.name }
 
 class ConnectFourGame:
     """
     Encapsulates logic for setting up the initial parameters of a Connect Four game and establishing its rules.
     """
 
-    def __init__(self, player_names: 'list[str]', width=7, height=6, victory_condition=4):
+    def __init__(self, player_names:'list[str]'=['Player One', 'Player Two'], width=7, height=6, victory_condition=4):
         """
         Sets up a game of Connect Four.
 
@@ -74,6 +90,17 @@ class ConnectFourGame:
         board_repr += 'Next Player: {0}'.format(self.players[self.current_player].name)
         return board_repr
 
+    @js_callback
+    def get_state(self):
+        state = {
+            'players' : [player.state for player in self.players],
+            'current_player' : self.current_player,
+            'discs' : [disc.state for disc in self.discs],
+            'grid' : self.grid.state,
+            'victory_condition' : self.victory_condition
+        }
+        return state
+
     def _get_player_chain(self, player_id: int, start_row: int, start_col: int, row_inc: int, col_inc: int):
         """
         Gets a list of discs that belong to the given player, starting from the given start row and column,
@@ -105,17 +132,6 @@ class ConnectFourGame:
                 break
 
         return chain
-
-    @js_callback
-    def get_game_state(self):
-        state = {
-            players: self.players,
-            currentPlayer: self.current_player,
-            discs: self.discs,
-            grid: self.grid,
-            victory_condition: self.victory_condition,
-        }
-        return state
 
     @js_callback
     def check_for_victory(self, row: int, col: int):

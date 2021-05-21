@@ -1,14 +1,15 @@
 {
     "extends": [
-        "tslint:all",
-        "tslint-config-prettier",
-        "tslint-plugin-prettier"
+        "tslint:recommended"
     ],
     "rules": {
-        // Formatting rules
         "prettier": true,
 
-        // Don't want these
+        "quotemark": false,
+        "prefer-method-signature": false,
+        "no-string-literal": false,
+        "object-literal-sort-keys": false,
+
         "cyclomatic-complexity": false,
         "increment-decrement": false,
         "newline-before-return": false,
@@ -31,7 +32,6 @@
             ]
         },
 
-        // TODO: Enable these
         "completed-docs": false,
         "no-any": false,
         "no-magic-numbers": false,
@@ -51,7 +51,6 @@
             ]
         },
 
-        // Misc
         "ban": {
             "options": [
                 [
@@ -65,11 +64,6 @@
             ]
         },
         "interface-name": false,
-        "file-header": {
-            "options": [
-                "Copyright \\d{4} Palantir Technologies, Inc."
-            ]
-        },
         "max-classes-per-file": false,
         "member-ordering": {
             "options": {
@@ -82,11 +76,7 @@
             ]
         },
         "no-switch-case-fall-through": true,
-        "strict-boolean-expressions": {
-            "options": [
-                "allow-boolean-or-undefined"
-            ]
-        },
+        "strict-boolean-expressions": false,
         "switch-default": false,
         "variable-name": {
             "options": [
