@@ -8,4 +8,5 @@ export interface GameState {
   discs: Disc[];
   grid: GridState;
   victory_condition: number;
+  winner_id: number;
 }

@@ -76,6 +76,7 @@ class ConnectFourGame:
         self.discs = [Disc(player.id, DISC_COLORS[index]) for index, player in enumerate(self.players)]
         self.grid = ConnectFourGrid(width, height)
         self.victory_condition = victory_condition
+        self.winner_id = None
 
     def __repr__(self):
         """
@@ -97,7 +98,8 @@ class ConnectFourGame:
             'current_player' : self.current_player,
             'discs' : [disc.state for disc in self.discs],
             'grid' : self.grid.state,
-            'victory_condition' : self.victory_condition
+            'victory_condition' : self.victory_condition,
+            'winner_id' : self.winner_id
         }
         return state
 
@@ -154,25 +156,29 @@ class ConnectFourGame:
         upper = self._get_player_chain(player_id, row + 1, col, 1, 0)
         lower = self._get_player_chain(player_id, row - 1, col, -1, 0)
         if len(upper) + len(lower) + 1 >= self.victory_condition:
-            return player_id
+            self.winner_id = player_id
+            return self.winner_id
         
         # Checks for horizontal line of discs
         left = self._get_player_chain(player_id, row, col - 1, 0, -1)
         right = self._get_player_chain(player_id, row, col + 1, 0, 1)
         if len(left) + len(right) + 1 >= self.victory_condition:
-            return player_id
+            self.winner_id = player_id
+            return self.winner_id
 
         # Checks for downward-right diagonal line of discs
         upper_left = self._get_player_chain(player_id, row + 1, col - 1, 1, -1)
         lower_right = self._get_player_chain(player_id, row - 1, col + 1, -1, 1)
         if len(upper_left) + len(lower_right) + 1 >= self.victory_condition:
-            return player_id
+            self.winner_id = player_id
+            return self.winner_id
 
         # Checks for upward-right diagonal line of discs
         lower_left = self._get_player_chain(player_id, row - 1, col - 1, -1, -1)
         upper_right = self._get_player_chain(player_id, row + 1, col + 1, 1, 1)
         if len(lower_left) + len(upper_right) + 1 >= self.victory_condition:
-            return player_id
+            self.winner_id = player_id
+            return self.winner_id
 
         return None
 
@@ -212,3 +218,17 @@ class ConnectFourGame:
             self.change_player()
 
         return player_id
+
+    @js_callback
+    def reset_game(self):
+        """
+        Starts a new game, reverting grid and game conditions to their initial states.
+
+        :return: State of game after reset.
+        """
+
+        self.grid.setup_grid()
+        self.current_player = 0
+        self.winner_id = None
+
+        return self.get_state()

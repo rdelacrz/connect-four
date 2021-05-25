@@ -1,5 +1,5 @@
 import { ActionTree } from 'vuex';
-import { ConnectFourGame } from '../models';
+import { ConnectFourGame, GameState } from '../models';
 import { RootState } from './state';
 
 const connectFour = (window as any).connectFour as ConnectFourGame;
@@ -41,6 +41,15 @@ const actions: ActionTree<RootState, RootState> = {
       });
     }
   },
+  resetGame: (context) => {
+    if (!context.state.updateInProgress) {
+      context.commit('SET_STATE_UPDATE_FLAG', true);
+      connectFour.reset_game((state) => {
+        context.commit('SET_GAME_STATE', state);
+        context.commit('SET_STATE_UPDATE_FLAG', false);
+      });
+    }
+  }
 };
 
 export default actions;

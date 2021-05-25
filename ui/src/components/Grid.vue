@@ -3,10 +3,10 @@
     <div class="grid-col-wrapper" v-for="(gridCol, colIndex) in gridSpaces" :key="colIndex" @click.stop="handleColumnClick(colIndex)">
       <div class="grid-space-container" v-for="gridSpace in gridSpaces[colIndex]" :key="gridSpace.y">
         <div v-if="!!gridSpace.disc">
-          <span :style="{'backgroundColor': gridSpace.disc.color}">{{gridSpace.disc.color}}</span>
+          <div class="token" :style="{'backgroundColor': gridSpace.disc.color}" />
         </div>
         <div v-else>
-          <span>{{gridSpace.x}}, {{gridSpace.y}}</span>
+          <div class="token empty" />
         </div>
       </div>
     </div>
@@ -21,6 +21,7 @@ import { GridState } from '../models';
 const Grid = defineComponent({
   props: {
     state: Object as () => GridState,
+    winnerId: Number,
   },
   data() {
     const gridSpaces = computed(() => this.$props.state?.grid_spaces || []);
@@ -28,20 +29,14 @@ const Grid = defineComponent({
     return {
       gridSpaces,
       availableColSpaces,
-      winnerId: -1,
     }
   },
   methods: {
     handleColumnClick(colNum: number) {
       const availableColSpaces = this.availableColSpaces as number[];
-      const winnerId = this.winnerId as number;
-      if (availableColSpaces[colNum] !== null && winnerId === -1) {
-        const callbackFn = (winningPlayer?: number) => {
-          if (winningPlayer !== null) {
-            this.winnerId = winningPlayer;
-          }
-        };
-        this.$store.dispatch('dropDisc', {colNum, callbackFn});
+      const winnerId = this.winnerId as number | null;
+      if (availableColSpaces[colNum] !== null && winnerId === null) {
+        this.$store.dispatch('dropDisc', {colNum});
       }
     },
   }
@@ -54,15 +49,21 @@ export default Grid;
 <style scoped lang="scss">
   .grid-wrapper {
     display: inline-block;
+    background-color: #A08C64;
     border: solid 5px black;
     .grid-col-wrapper {
       display: inline-flex;
       flex-direction: column-reverse;
       cursor: pointer;
       .grid-space-container {
-        border: solid 2px black;
-        height: 80px;
-        width: 80px;
+        padding: 10px;
+        .token {
+          background-color: white;
+          border: solid 2px black;
+          border-radius: 50%;
+          height: 80px;
+          width: 80px;
+        }
       }
     }
   }
