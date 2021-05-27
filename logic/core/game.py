@@ -2,12 +2,13 @@
 Contains the logic needed to run a game of Connect Four.
 """
 
-# Third-party modules
-from cefpython3 import cefpython as cef
+# Built-in modules
+from copy import deepcopy
 
 # User-defined modules
 from .components import ConnectFourGrid, Disc
 from .exceptions import IllegalAction, IllegalState, InvalidSpace
+from ..utilities import js_callback
 
 DISC_COLORS = [
     '#F5473E',  # red
@@ -15,30 +16,6 @@ DISC_COLORS = [
     '#048B44',  # green
     '#293777',  # blue
 ]
-
-def js_callback(func):
-    """
-    Takes the return value of the function being wrapped and passes it through the callback function (if any).
-    It is meant for JavaScript callback purposes, which cannot return a value because inter-process messaging 
-    is asynchronous.
-    """
-
-    def wrapper(*args):
-        # Grabs callback function from positional arguments (if one is provided)
-        callback_fn = None
-        func_args = args
-        if type(args[-1]) is cef.JavascriptCallback:
-            callback_fn = args[-1]
-            func_args = args[:-1]
-
-        # Passes return value from function accordingly (depending on whether a callback function is passed or not)
-        ret = func(*func_args)
-        if callback_fn is not None:
-            callback_fn.Call(ret)
-        else:
-            return ret
-
-    return wrapper
  
 class Player:
     def __init__(self, player_id: int, name: str):

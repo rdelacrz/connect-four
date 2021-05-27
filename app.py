@@ -10,6 +10,7 @@ import os, sys
 import types
 
 # User-defined libraries
+from logic.ai.minimax import MinimaxAI
 from logic.core.game import ConnectFourGame
 
 # Third-party libraries
@@ -41,8 +42,12 @@ def set_javascript_bindings(browser):
     bindings = cef.JavascriptBindings(bindToFrames=False, bindToPopups=False)
 
     # Binds connect four's functions to the application
-    connect_four = ConnectFourGame()
+    connect_four = ConnectFourGame(["Player One", "Minimax AI"])
     bindings.SetObject('connectFour', connect_four)
+
+    # Sets up AI
+    ai = MinimaxAI(1, connect_four)
+    bindings.SetObject('ai', ai)
 
     browser.SetJavascriptBindings(bindings)
 

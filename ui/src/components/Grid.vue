@@ -36,7 +36,9 @@ const Grid = defineComponent({
       const availableColSpaces = this.availableColSpaces as number[];
       const winnerId = this.winnerId as number | null;
       if (availableColSpaces[colNum] !== null && winnerId === null) {
-        this.$store.dispatch('dropDisc', {colNum});
+        this.$store.dispatch('dropDisc', {colNum}).then(() => {
+          this.$emit('playerClick', colNum);
+        });
       }
     },
   }

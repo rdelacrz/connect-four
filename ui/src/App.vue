@@ -32,6 +32,9 @@ const App = defineComponent({
     currentPlayer() {
       return this.$store.state.gameState?.current_player;
     },
+    aiPlayerId() {
+      return this.$store.state.aiPlayerId;
+    },
     currentTokenColor() {
       const discs: Disc[] = this.$store.state.gameState?.discs || [];
       const currentPlayer: number = this.$store.state.gameState?.current_player || 0;
@@ -50,11 +53,25 @@ const App = defineComponent({
   },
   mounted() {
     this.$store.dispatch('getGameState');
+    this.$store.dispatch('getAIPlayerId');
+  },
+  watch: {
+    grid() {
+      setTimeout(() => {
+        if (this.currentPlayer === this.aiPlayerId && this.winnerId === null) {
+          const callbackFn = (colNum: number) => {
+            console.log('Optimal col: ', colNum)
+            this.$store.dispatch('dropDisc', {colNum});
+          };
+          this.$store.dispatch('getAIOptimalCol', {searchDepth: 2, callbackFn});
+        }
+      }, 0);
+    },
   },
   methods: {
     resetGame() {
       this.$store.dispatch('resetGame');
-    }
+    },
   },
 })
 

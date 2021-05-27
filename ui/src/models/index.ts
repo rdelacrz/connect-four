@@ -1,3 +1,4 @@
+export * from './ai';
 export * from './connect-four-game';
 export * from './disc';
 export * from './game-state';

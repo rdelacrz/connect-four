@@ -16,10 +16,10 @@ class Disc:
         return { 'player_id' : self.player_id, 'color' : self.color }
 
 class GridSpace:
-    def __init__(self, x: int, y: int):
-        self.disc: Disc = None
+    def __init__(self, x: int, y: int, disc: Disc = None):
         self.x = x
         self.y = y
+        self.disc = disc
 
     def __repr__(self):
         return '_' if self.disc is None else str(self.disc.player_id)

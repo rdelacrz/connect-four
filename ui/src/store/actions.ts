@@ -1,10 +1,12 @@
 import { ActionTree } from 'vuex';
-import { ConnectFourGame, GameState } from '../models';
+import { AI, ConnectFourGame } from '../models';
 import { RootState } from './state';
 
 const connectFour = (window as any).connectFour as ConnectFourGame;
+const ai = (window as any).ai as AI;
 
 const actions: ActionTree<RootState, RootState> = {
+  // Main game actions
   getGameState: (context) => {
     connectFour.get_state((state) => {
       context.commit('SET_GAME_STATE', state);
@@ -13,7 +15,7 @@ const actions: ActionTree<RootState, RootState> = {
   },
   checkForVictory: (context, payload: {row: number, col: number, callbackFn?: (newPlayerId?: number) => void}) => {
     connectFour.check_for_victory(payload.row, payload.col, (playerId?: number) => {
-      if (!!payload.callbackFn) {
+      if (payload.callbackFn) {
         payload.callbackFn(playerId);
       }
       context.dispatch('getGameState');
@@ -23,7 +25,7 @@ const actions: ActionTree<RootState, RootState> = {
     if (!context.state.updateInProgress) {
       context.commit('SET_STATE_UPDATE_FLAG', true);
       connectFour.change_player(payload.playerId, (newPlayerId: number) => {
-        if (!!payload.callbackFn) {
+        if (payload.callbackFn) {
           payload.callbackFn(newPlayerId);
         }
         context.dispatch('getGameState');
@@ -34,7 +36,7 @@ const actions: ActionTree<RootState, RootState> = {
     if (!context.state.updateInProgress) {
       context.commit('SET_STATE_UPDATE_FLAG', true);
       connectFour.drop_disc(payload.colNum, (winningPlayer?: number) => {
-        if (!!payload.callbackFn) {
+        if (payload.callbackFn) {
           payload.callbackFn(winningPlayer);
         }
         context.dispatch('getGameState');
@@ -49,7 +51,17 @@ const actions: ActionTree<RootState, RootState> = {
         context.commit('SET_STATE_UPDATE_FLAG', false);
       });
     }
-  }
+  },
+
+  // AI actions
+  getAIPlayerId: (context) => {
+    ai.get_ai_id((aiPlayerId) => {
+      context.commit('SET_AI_PLAYER_ID', aiPlayerId);
+    });
+  },
+  getAIOptimalCol: (context, payload: { searchDepth?: number, callbackFn?: (optimalCol?: number) => void }) => {
+    ai.get_optimal_col(payload.searchDepth || 4, payload.callbackFn);
+  },
 };
 
 export default actions;
