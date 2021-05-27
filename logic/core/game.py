@@ -113,15 +113,17 @@ class ConnectFourGame:
         return chain
 
     @js_callback
-    def check_for_victory(self, row: int, col: int):
+    def check_for_discs_in_row(self, row: int, col: int, discs_in_row: int):
         """
-        Checks for a line of horizontal, vertical, or diagonal discs that meet the victory condition for
-        a single player.
+        Checks for a line of horizontal, vertical, or diagonal discs that are at least the 
+        given number of discs in a row for a single player.
 
-        :param `row`: Starting row to check for victory from.
-        :param `col`: Starting column to check for victory from.
+        :param `row`: Starting row to check for discs in a row from.
+        :param `col`: Starting column to check for discs in a row from.
+        :param `discs_in_row`: Number of discs in a row to check for.
 
-        :return: Player id meeting victory condition, or None if victory condition is not met.
+        :return: Player id with the given number of discs in a row, or None if given discs in a row can't be found
+        at given starting row and column.
         """
 
         if row < 0 or row > self.grid.height or col < 0 or col > self.grid.width:
@@ -132,30 +134,26 @@ class ConnectFourGame:
         # Checks for vertical line of discs
         upper = self._get_player_chain(player_id, row + 1, col, 1, 0)
         lower = self._get_player_chain(player_id, row - 1, col, -1, 0)
-        if len(upper) + len(lower) + 1 >= self.victory_condition:
-            self.winner_id = player_id
-            return self.winner_id
+        if len(upper) + len(lower) + 1 >= discs_in_row:
+            return player_id
         
         # Checks for horizontal line of discs
         left = self._get_player_chain(player_id, row, col - 1, 0, -1)
         right = self._get_player_chain(player_id, row, col + 1, 0, 1)
-        if len(left) + len(right) + 1 >= self.victory_condition:
-            self.winner_id = player_id
-            return self.winner_id
+        if len(left) + len(right) + 1 >= discs_in_row:
+            return player_id
 
         # Checks for downward-right diagonal line of discs
         upper_left = self._get_player_chain(player_id, row + 1, col - 1, 1, -1)
         lower_right = self._get_player_chain(player_id, row - 1, col + 1, -1, 1)
-        if len(upper_left) + len(lower_right) + 1 >= self.victory_condition:
-            self.winner_id = player_id
-            return self.winner_id
+        if len(upper_left) + len(lower_right) + 1 >= discs_in_row:
+            return player_id
 
         # Checks for upward-right diagonal line of discs
         lower_left = self._get_player_chain(player_id, row - 1, col - 1, -1, -1)
         upper_right = self._get_player_chain(player_id, row + 1, col + 1, 1, 1)
-        if len(lower_left) + len(upper_right) + 1 >= self.victory_condition:
-            self.winner_id = player_id
-            return self.winner_id
+        if len(lower_left) + len(upper_right) + 1 >= discs_in_row:
+            return player_id
 
         return None
 
@@ -188,11 +186,13 @@ class ConnectFourGame:
 
         disc = self.discs[self.current_player]
         row_num = self.grid.drop_disc(disc, col_num)
-        player_id = self.check_for_victory(row_num, col_num)
+        player_id = self.check_for_discs_in_row(row_num, col_num, self.victory_condition)
 
         # Has next player make move if current player has not won
         if player_id is None:
             self.change_player()
+        else:
+            self.winner_id = player_id
 
         return player_id
 

@@ -1,7 +1,7 @@
 <template>
   <div class="app-wrapper">
     <div class="grid-outer-container">
-      <Grid :state='grid' :winnerId='winnerId' />
+      <Grid :state='grid' :winnerId='winnerId' :playerTurn='playerTurn' />
     </div>
     <div class="game-board-wrapper">
       <h1>Players</h1>
@@ -32,8 +32,8 @@ const App = defineComponent({
     currentPlayer() {
       return this.$store.state.gameState?.current_player;
     },
-    aiPlayerId() {
-      return this.$store.state.aiPlayerId;
+    playerTurn() {
+      return this.$store.state.aiPlayerId !== this.$store.state.gameState?.current_player;
     },
     currentTokenColor() {
       const discs: Disc[] = this.$store.state.gameState?.discs || [];
@@ -54,19 +54,6 @@ const App = defineComponent({
   mounted() {
     this.$store.dispatch('getGameState');
     this.$store.dispatch('getAIPlayerId');
-  },
-  watch: {
-    grid() {
-      setTimeout(() => {
-        if (this.currentPlayer === this.aiPlayerId && this.winnerId === null) {
-          const callbackFn = (colNum: number) => {
-            console.log('Optimal col: ', colNum)
-            this.$store.dispatch('dropDisc', {colNum});
-          };
-          this.$store.dispatch('getAIOptimalCol', {searchDepth: 2, callbackFn});
-        }
-      }, 0);
-    },
   },
   methods: {
     resetGame() {

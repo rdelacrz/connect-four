@@ -1,9 +1,10 @@
 import { GameState } from './game-state';
 
 export interface ConnectFourGame {
-  get_state: (callback_fn?: (state: GameState) => void) => void;
-  check_for_victory: (row: number, col: number, callback_fn?: (playerId: number) => void) => void;
-  change_player: (playerId?: number, callback_fn?: (newPlayerId: number) => void) => void;
-  drop_disc: (col_num: number, callback_fn?: (winningPlayer?: number) => void) => void;
-  reset_game: (callback_fn?: (state: GameState) => void) => void;
+  get_state: (callbackFn?: (state: GameState) => void) => void;
+  check_for_discs_in_row: (row: number, col: number, discsInRow: number,
+                           callbackFn?: (playerId: number) => void) => void;
+  change_player: (playerId?: number, callbackFn?: (newPlayerId: number) => void) => void;
+  drop_disc: (colNum: number, callbackFn?: (winningPlayer?: number) => void) => void;
+  reset_game: (callbackFn?: (state: GameState) => void) => void;
 }

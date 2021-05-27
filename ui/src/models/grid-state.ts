@@ -7,4 +7,5 @@ export interface GridState {
   grid_spaces: GridSpace[][];
   available_col_spaces: number[];
   inserted_disc_count: number;
+  most_recently_modified_space: GridSpace | null;
 }

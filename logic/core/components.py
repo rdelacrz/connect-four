@@ -57,7 +57,8 @@ class ConnectFourGrid:
             'total_capacity' : self.total_capacity,
             'grid_spaces' : [[space.state for space in col] for col in self.grid_spaces],
             'available_col_spaces' : self.available_col_spaces,
-            'inserted_disc_count' : self.inserted_disc_count
+            'inserted_disc_count' : self.inserted_disc_count,
+            'most_recently_modified_space': self.most_recently_modified_space
         }
 
     def setup_grid(self):
@@ -71,6 +72,7 @@ class ConnectFourGrid:
         self.grid_spaces = [[GridSpace(x, y) for y in range(self.height)] for x in range(self.width)]
         self.available_col_spaces = [0 for _ in range(self.width)]
         self.inserted_disc_count = 0
+        self.most_recently_modified_space = None
 
     def is_grid_full(self):
         """
@@ -100,6 +102,7 @@ class ConnectFourGrid:
             raise IllegalAction('Cannot place a disc in a grid column that is completely full!')
         else:
             self.grid_spaces[col_num][row_num].disc = disc
+            self.most_recently_modified_space = self.grid_spaces[col_num][row_num]
 
             # Sets next available row to None if it exceeds height of the grid
             next_available_row = row_num + 1
