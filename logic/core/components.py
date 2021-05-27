@@ -4,6 +4,10 @@ variables and methods required to setup and interact with the grid. Functional l
 Connect Four will be implemented elsewhere, allowing for a clear separation between game logic and data structure.
 """
 
+# Built-in modules
+from copy import deepcopy
+
+# User-defined modules
 from .exceptions import IllegalAction
 
 class Disc:
@@ -14,6 +18,9 @@ class Disc:
     @property
     def state(self):
         return { 'player_id' : self.player_id, 'color' : self.color }
+    
+    def __deepcopy__(self, memodict={}):
+        return Disc(self.player_id, self.color)
 
 class GridSpace:
     def __init__(self, x: int, y: int, disc: Disc = None):
@@ -23,6 +30,9 @@ class GridSpace:
 
     def __repr__(self):
         return '_' if self.disc is None else str(self.disc.player_id)
+
+    def __deepcopy__(self, memodict={}):
+        return GridSpace(self.x, self.y, deepcopy(self.disc))
 
     @property
     def state(self):
@@ -48,6 +58,17 @@ class ConnectFourGrid:
             row = [self.grid_spaces[x][y] for x in range(self.width)]
             board_repr += ' '.join([str(grid_space) for grid_space in row]) + '\n'
         return board_repr
+
+    def __deepcopy__(self, memodict={}):
+        grid = ConnectFourGrid(0, 0)    # Short-circuits initial setup logic for efficiency
+        grid.width = self.width
+        grid.height = self.height
+        grid.total_capacity = self.total_capacity
+        grid.grid_spaces = deepcopy(self.grid_spaces)
+        grid.available_col_spaces = deepcopy(self.available_col_spaces)
+        grid.inserted_disc_count = self.inserted_disc_count
+        grid.most_recently_modified_space = deepcopy(self.most_recently_modified_space)
+        return grid
 
     @property
     def state(self):

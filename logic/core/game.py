@@ -22,6 +22,9 @@ class Player:
         self.id = player_id
         self.name = name
 
+    def __deepcopy__(self, memodict={}):
+        return Player(self.id, self.name)
+
     @property
     def state(self):
         return { 'id' : self.id, 'name' : self.name }
@@ -68,6 +71,16 @@ class ConnectFourGame:
         board_repr += 'Next Player: {0}'.format(self.players[self.current_player].name)
         return board_repr
 
+    def __deepcopy__(self, memodict={}):
+        game = ConnectFourGame(height=0, width=0)   # Short-circuits initial setup logic for efficiency
+        game.players = deepcopy(self.players)
+        game.current_player = self.current_player
+        game.discs = deepcopy(self.discs)
+        game.grid = deepcopy(self.grid)
+        game.victory_condition = self.victory_condition
+        game.winner_id = self.winner_id
+        return game
+
     @js_callback
     def get_state(self):
         state = {
@@ -113,7 +126,7 @@ class ConnectFourGame:
         return chain
 
     @js_callback
-    def check_for_discs_in_row(self, row: int, col: int, discs_in_row: int):
+    def check_for_discs_in_row(self, row: int, col: int, discs_in_row: int, player_id: int = None):
         """
         Checks for a line of horizontal, vertical, or diagonal discs that are at least the 
         given number of discs in a row for a single player.
@@ -121,6 +134,8 @@ class ConnectFourGame:
         :param `row`: Starting row to check for discs in a row from.
         :param `col`: Starting column to check for discs in a row from.
         :param `discs_in_row`: Number of discs in a row to check for.
+        :param `player_id`: Player id whose discs are being looked for. If none is provided, the player id
+        of the disc at the given row and column will be used instead.
 
         :return: Player id with the given number of discs in a row, or None if given discs in a row can't be found
         at given starting row and column.
@@ -129,7 +144,7 @@ class ConnectFourGame:
         if row < 0 or row > self.grid.height or col < 0 or col > self.grid.width:
             raise InvalidSpace("Attempted to check a space that doesn't exist on the grid!")
 
-        player_id = self.grid.grid_spaces[col][row].disc.player_id
+        player_id = player_id if player_id is not None else self.grid.grid_spaces[col][row].disc.player_id
 
         # Checks for vertical line of discs
         upper = self._get_player_chain(player_id, row + 1, col, 1, 0)
