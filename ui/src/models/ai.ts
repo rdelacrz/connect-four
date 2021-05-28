@@ -1,4 +1,6 @@
 export interface AI {
-  get_ai_id: (callback_fn?: (aiPlayerId: number) => void) => void;
-  get_optimal_col: (search_depth?: number, callback_fn?: (optimalCol: number) => void) => void;
+  get_ai_id: (callbackFn?: (aiPlayerId: number) => void) => void;
+
+  // Search depth essentially equals the difficulty level (4 = extremely hard!)
+  get_optimal_col: (searchDepth?: number, callbackFn?: (optimalCol: number) => void) => void;
 }
