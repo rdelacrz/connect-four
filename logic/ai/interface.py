@@ -15,22 +15,11 @@ class ConnectFourAI:
         self.ai_player_id = ai_player_id
         self.game = game
         self.ai_type = ai_type
+        self.winner_heuristic_value = 10000
 
     @js_callback
     def get_ai_id(self):
         return self.ai_player_id
-
-    def heuristic_function(self, game_node: ConnectFourGame):
-        """
-        The heuristic function applied to a game node to assign a ranking for how optimal the grid's state is
-        for the current AI player.
-
-        :param `game_node`: Node containing an instance of the current game state after a move was performed.
-
-        :return: Integer representing the optimality of a grid's state for the AI player.
-        """
-
-        raise NotImplementedError("This function must be implemented by AI.")
 
     def get_optimal_col(self, search_depth = 4):
         """
